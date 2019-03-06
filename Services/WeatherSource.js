@@ -5,7 +5,7 @@ function cityUrl(city) {
     return `${API_ADDRESS}q=${city}&APPID=${API_KEY}&lang=pl`;
 }
 
-function getForecast(url) {
+function getWeather(url) {
     return fetch(url)
         .then(response => response.json())
         .then(responseJSON => {
@@ -26,10 +26,10 @@ function getForecast(url) {
         });
 }
 
-function getForecastForCity(city) {
-    return getForecast(cityUrl(city));
+function getWeatherForCity(city) {
+    return getWeather(cityUrl(city));
 }
 
 export default {
-    getForecastForCity: getForecastForCity
+    getWeatherForCity: getWeatherForCity
 };

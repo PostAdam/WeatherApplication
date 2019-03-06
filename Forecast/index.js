@@ -18,11 +18,11 @@ export default class Forecast extends Component {
                         color="#212121"
                         size={110} />
                     <Text style={[styles.temperature, styles.shadowEffect]}>
-                        {this.props._getTemperature()}°C
+                        {this.props.getTemperature()}°C
                         </Text>
                 </View>
                 <Text style={[styles.weatherDescription, styles.shadowEffect]}>
-                    {this.props._getWeatherDescription()}
+                    {this.props.getWeatherDescription()}
                 </Text>
             </View>
         );

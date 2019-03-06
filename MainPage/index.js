@@ -4,43 +4,46 @@ import ForecastSource from '../ForecastSource';
 import Forecast from '../Forecast';
 import WeatherBackground from '../WeatherBackground';
 import RegularText from '../RegularText';
-import Storage from '../ApplicationStorage';
-import { View, TextInput, StyleSheet } from 'react-native';
+import {loadData, saveData} from '../ApplicationStorage';
+import { View, TextInput, StyleSheet, AsyncStorage } from 'react-native';
 
-const FORECAST_STORAGE_KEY = '@Weather:forecast';
+const FORECAST_STORAGE_KEY = '@Weather:weather';
 
 export default class MainPage extends Component {
     cityName = '';
 
     constructor(props) {
         super(props);
-        this.state = { city: '', temp: "8", forecast: null };
+        this.state = { city: '', temp: '', forecast: null };
     }
 
     componentDidMount() {
-        let city = Storage.readData(FORECAST_STORAGE_KEY);
-        console.log(city);
-        if(city !== null) {
-            this.setState({ city: city });
-            this.searchForecast(null);
-        }
+        loadData(FORECAST_STORAGE_KEY)
+            .then(value => {
+                if (value !== null) {
+                    this.setState({ city: value });
+                    this.searchForecast();
+                }
+            });
     }
 
-    searchForecast = event => {
+    searchForecast = () => {
+        saveData(FORECAST_STORAGE_KEY, this.state.city);
         ForecastSource.getForecastForCity(this.state.city)
             .then(forecast => {
                 console.log(forecast);
-                this.cityName = this.state.city;
-                this.setState({ forecast: forecast });
-                Storage.saveData(FORECAST_STORAGE_KEY, this.state.city);
+                if (forecast !== null) {
+                    this.cityName = this.state.city;
+                    this.setState({ forecast: forecast });
+                }
             });
     };
 
-    _getTemperature = () => {
+    getTemperature = () => {
         return Math.floor(this.state.forecast.temp - 273.15);
     };
 
-    _getWeatherDescription = () => {
+    getWeatherDescription = () => {
         return this.state.forecast.description;
     };
 
@@ -52,9 +55,8 @@ export default class MainPage extends Component {
         if (this.state.forecast !== null) {
             forecastData = (
                 <Forecast
-                    _getIconForWeather={this._getIconForWeather}
-                    _getWeatherDescription={this._getWeatherDescription}
-                    _getTemperature={this._getTemperature}
+                    getWeatherDescription={this.getWeatherDescription}
+                    getTemperature={this.getTemperature}
                     icon={this.state.forecast.icon}
                     style={styles.forecast}
                 />

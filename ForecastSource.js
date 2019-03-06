@@ -9,12 +9,17 @@ function getForecast(url) {
     return fetch(url)
         .then(response => response.json())
         .then(responseJSON => {
-            return {
-                main: responseJSON.weather[0].main,
-                description: responseJSON.weather[0].description,
-                icon: responseJSON.weather[0].icon,
-                temp: responseJSON.main.temp
-            };
+            if (responseJSON.cod !== '404') {
+                return {
+                    main: responseJSON.weather[0].main,
+                    description: responseJSON.weather[0].description,
+                    icon: responseJSON.weather[0].icon,
+                    temp: responseJSON.main.temp
+                };
+            } else {
+                return null;
+            }
+            
         })
         .catch(error => {
             console.error(error);
